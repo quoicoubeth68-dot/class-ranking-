@@ -1,0 +1,21 @@
+CLASS RANKING — VERSION ANDROID (PWA)
+
+Cette version est une application web installable (PWA), avec affichage plein écran
+et fonctionnement hors ligne après la première visite. Les notes restent stockées
+dans le stockage local du navigateur/appareil.
+
+IMPORTANT : Android exige une adresse HTTPS pour proposer l'installation PWA.
+Le fichier ZIP doit donc être publié sur un hébergement HTTPS (par exemple GitHub Pages).
+Ce ZIP n'est pas un APK Android natif.
+
+Installation sur Android :
+1. Publie le contenu de ce dossier sur un hébergement HTTPS.
+2. Ouvre l'adresse du site avec Chrome sur Android.
+3. Ouvre le menu ⋮ de Chrome.
+4. Choisis « Installer l'application » ou « Ajouter à l'écran d'accueil ».
+5. Confirme. CLASS RANKING apparaîtra comme une application sur ton téléphone.
+
+Sauvegarde :
+Utilise EXPORT dans l'application pour télécharger régulièrement une copie JSON
+de tes notes. Les données locales du navigateur peuvent être perdues si ses données
+sont effacées ou si tu changes d'appareil.
