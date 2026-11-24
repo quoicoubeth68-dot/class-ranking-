@@ -4,9 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#10131c">
-<meta name="application-name" content="CLASS RANKING">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="manifest" href="./manifest.webmanifest">
 <title>CLASS RANKING</title>
 <style>
 :root{color-scheme:dark;--bg:#10131c;--panel:#191f2d;--card:#20283a;--line:#394154;--muted:#aab4c8;--gold:#e9bd55;--green:#55c58a;--red:#e16e78}
@@ -29,9 +27,44 @@ button{border:0;border-radius:9px;padding:11px 14px;font:700 13px system-ui;curs
 footer{text-align:center;color:var(--muted);font-size:11px;padding:15px}
 dialog{background:var(--panel);color:#fff;border:1px solid var(--line);border-radius:14px;width:min(420px,calc(100% - 28px));padding:20px}dialog::backdrop{background:#000a}dialog h3{margin-top:0}dialog form{grid-template-columns:1fr 1fr}dialog .wide{grid-column:1/-1}
 @media(max-width:650px){form{grid-template-columns:1fr 1fr}form .field:first-child{grid-column:1/-1}form button{grid-column:1/-1}.subjects{grid-template-columns:1fr}.score{align-items:flex-start}.score-right{flex-wrap:wrap;justify-content:flex-end}.panel{padding:15px}header{padding:15px 16px}}
+
+/* Competitive-game UI motion pack */
+:root{--ease-out:cubic-bezier(.16,1,.3,1)}
+.hero{position:relative;overflow:hidden;animation:panel-in .65s var(--ease-out) both}
+.hero:after{content:"";position:absolute;inset:-40% auto -40% -35%;width:35%;transform:rotate(18deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.065),transparent);animation:shine-sweep 7s ease-in-out infinite;pointer-events:none}
+.panel{animation:panel-in .5s var(--ease-out) both}
+.panel:nth-of-type(2){animation-delay:.05s}.panel:nth-of-type(3){animation-delay:.1s}.panel:nth-of-type(4){animation-delay:.15s}.panel:nth-of-type(5){animation-delay:.2s}
+.subject{transition:transform .22s var(--ease-out),border-color .22s,box-shadow .22s; border:1px solid transparent;animation:card-in .4s var(--ease-out) both}
+.subject:hover{transform:translateY(-3px);border-color:#58647d;box-shadow:0 8px 24px #0004}
+.rank{transition:transform .2s,filter .2s}
+.rank.gold{box-shadow:0 0 12px #e9bd5528;animation:gold-pulse 2.8s ease-in-out infinite}
+.rank.green{box-shadow:0 0 10px #55c58a20}
+.bar i{transition:width .8s var(--ease-out);box-shadow:0 0 10px #e9bd5570}
+button{transition:transform .12s ease,filter .18s,box-shadow .18s}
+button:hover{filter:brightness(1.12);box-shadow:0 4px 15px #0003}
+button:active{transform:scale(.96)}
+.score{animation:score-in .35s var(--ease-out) both;transition:transform .18s,background .18s}
+.score:hover{transform:translateX(3px);background:#273149}
+.toast-wrap{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:99;pointer-events:none;width:min(92%,460px)}
+.rank-toast{display:flex;align-items:center;gap:10px;background:#192333;border:1px solid #e9bd55;border-radius:12px;padding:12px 15px;box-shadow:0 12px 36px #0008;animation:toast-in .45s var(--ease-out),toast-out .4s ease 3.2s forwards}
+.rank-toast .toast-icon{font-size:23px}.rank-toast strong{color:var(--gold);display:block}.rank-toast small{color:var(--muted)}
+.rank-up .hero{animation:rank-burst .8s ease}
+.confetti{position:fixed;top:-14px;width:7px;height:11px;border-radius:2px;z-index:98;pointer-events:none;animation:confetti-fall 1.65s ease-in forwards}
+@keyframes panel-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes card-in{from{opacity:0;transform:translateY(8px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes score-in{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+@keyframes shine-sweep{0%,65%{left:-45%}100%{left:130%}}
+@keyframes gold-pulse{0%,100%{filter:brightness(1)}50%{filter:brightness(1.18)}}
+@keyframes toast-in{from{opacity:0;transform:translateY(-15px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes toast-out{to{opacity:0;transform:translateY(-12px) scale(.98)}}
+@keyframes rank-burst{0%,100%{box-shadow:none}40%{box-shadow:0 0 0 2px #e9bd5570,0 0 36px #e9bd5540}}
+@keyframes confetti-fall{to{transform:translate(var(--drift),105vh) rotate(720deg);opacity:0}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
 </style>
 </head>
 <body>
+<div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
 <header><div class="brand">🏆 CLASS <span>RANKING</span></div><div class="online">● PERSONAL LEADERBOARD</div></header>
 <main>
 <section class="hero">
@@ -110,7 +143,9 @@ function render(){
  const sorted=[...grades].sort((a,b)=>b.createdAt-a.createdAt);
  $("scoreList").innerHTML=sorted.length?sorted.map(g=>`<div class="score"><div class="score-info"><strong>${escapeHtml(g.subject)}</strong><small>${escapeHtml(g.original||fmt(g.value)+"/20")} · ${new Date(g.createdAt).toLocaleDateString("fr-FR")}</small></div><div class="score-right"><span class="score-value">${fmt(g.value)}/20</span><span class="rank ${rankClass(rank(g.value))}">${rank(g.value)}</span><div class="actions"><button class="secondary" type="button" data-edit="${g.id}" aria-label="Modifier">EDIT</button><button class="danger" type="button" data-delete="${g.id}" aria-label="Supprimer">✕</button></div></div></div>`).join(""):'<div class="empty">Aucune note enregistrée pour le moment.</div>';
 }
-function addGrade(subject,grade,outOf){if(!Number.isFinite(grade)||!Number.isFinite(outOf)||outOf<=0||grade<0||grade>outOf)return false;const value=grade/outOf*20;grades.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),subject,value,original:`${grade}/${outOf}`,createdAt:Date.now()});save();render();return true}
+function showToast(title,subtitle,icon="✨"){const wrap=$("toastWrap");wrap.innerHTML=`<div class="rank-toast"><span class="toast-icon">${icon}</span><div><strong>${escapeHtml(title)}</strong><small>${escapeHtml(subtitle)}</small></div></div>`;setTimeout(()=>{wrap.innerHTML=""},3800)}
+function confetti(){const colors=["#e9bd55","#55c58a","#7aa7ff","#f5f7fb"];for(let i=0;i<34;i++){const p=document.createElement("i");p.className="confetti";p.style.left=(Math.random()*100)+"vw";p.style.background=colors[i%colors.length];p.style.setProperty("--drift",(Math.random()*180-90)+"px");p.style.animationDelay=(Math.random()*.22)+"s";document.body.appendChild(p);setTimeout(()=>p.remove(),2100)}}
+function addGrade(subject,grade,outOf){if(!Number.isFinite(grade)||!Number.isFinite(outOf)||outOf<=0||grade<0||grade>outOf)return false;const before=average(grades),beforeRank=before===null?null:rank(before);const value=grade/outOf*20;grades.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),subject,value,original:`${grade}/${outOf}`,createdAt:Date.now()});save();render();const after=average(grades),afterRank=rank(after);if(beforeRank&&beforeRank!==afterRank){showToast("RANK UP! "+afterRank,`Moyenne générale : ${after.toFixed(2)}/20`,"🏆");document.body.classList.add("rank-up");confetti();setTimeout(()=>document.body.classList.remove("rank-up"),900)}else{showToast("NOTE AJOUTÉE",`${subject} · ${grade}/${outOf} (${rank(value)})`,"⚡")}return true}
 $("gradeForm").addEventListener("submit",e=>{e.preventDefault();const subject=$("subject").value,grade=Number($("grade").value),outOf=Number($("outOf").value);if(addGrade(subject,grade,outOf)){ $("grade").value="";$("outOf").value="20";}});
 $("scoreList").addEventListener("click",e=>{const del=e.target.closest("[data-delete]"),edit=e.target.closest("[data-edit]");if(del){if(confirm("Supprimer cette note ?")){grades=grades.filter(g=>g.id!==del.dataset.delete);save();render()}}if(edit){const g=grades.find(x=>x.id===edit.dataset.edit);if(!g)return;const parts=(g.original||`${g.value}/20`).split("/");$("editId").value=g.id;$("editSubject").value=g.subject;$("editGrade").value=parts[0];$("editOutOf").value=parts[1]||20;$("editDialog").showModal()}});
 $("editForm").addEventListener("submit",e=>{e.preventDefault();const id=$("editId").value,grade=Number($("editGrade").value),outOf=Number($("editOutOf").value);if(!Number.isFinite(grade)||!Number.isFinite(outOf)||outOf<=0||grade<0||grade>outOf){alert("Vérifie la note et le barème.");return}const g=grades.find(x=>x.id===id);if(g){g.subject=$("editSubject").value;g.value=grade/outOf*20;g.original=`${grade}/${outOf}`;g.createdAt=Date.now();save();render()}$("editDialog").close()});
@@ -120,10 +155,6 @@ $("importBtn").addEventListener("click",()=>$("importFile").click());
 $("importFile").addEventListener("change",async e=>{const file=e.target.files[0];if(!file)return;try{const data=JSON.parse(await file.text());const incoming=Array.isArray(data)?data:data.grades;if(!Array.isArray(incoming))throw Error();const clean=incoming.filter(g=>g&&SUBJECTS.includes(g.subject)&&Number.isFinite(Number(g.value))&&Number(g.value)>=0&&Number(g.value)<=20).map(g=>({...g,id:String(g.id||crypto.randomUUID?.()||Date.now()+Math.random()),value:Number(g.value),createdAt:Number(g.createdAt)||Date.now()}));if(confirm(`Importer ${clean.length} note(s) ? Cela remplacera les notes actuelles.`)){grades=clean;save();render()}}catch{alert("Fichier de sauvegarde invalide.")}e.target.value=""});
 options($("subject"));options($("editSubject"));load();render();
 </script>
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));
-}
-</script>
+<script>if("serviceWorker" in navigator){addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script>
 </body>
 </html>
