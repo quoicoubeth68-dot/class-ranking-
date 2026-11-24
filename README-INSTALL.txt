@@ -1,8 +1,7 @@
-CLASS RANKING — Animated update
-
-Replace the files in your existing GitHub repository with these updated files:
-index.html, manifest.webmanifest, sw.js, icon-192.png, icon-512.png.
-Commit changes to main. GitHub Pages will rebuild automatically.
-Animations include smooth panel/card entrance, rank glow, progress bar easing,
-score feedback toast, and a small celebration when the global rank tier changes.
-The same dark navy/gold style is preserved and reduced-motion accessibility is respected.
+CLASS RANKING ARENA — mise à jour v3
+1. Dans ton dépôt GitHub, ouvre Add file > Upload files.
+2. Envoie index.html, manifest.webmanifest, sw.js, icon-192.png et icon-512.png (à la racine).
+3. Appuie sur Commit changes.
+4. Attends la publication GitHub Pages, puis ouvre ton site avec ?v=3 à la fin de l'adresse.
+Cette version reconstruit l'application : les notes seront à ressaisir.
+Les données de cette version sont sauvegardées localement dans le navigateur.

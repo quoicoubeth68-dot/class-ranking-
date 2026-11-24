@@ -1,160 +1,108 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#10131c">
-<link rel="manifest" href="./manifest.webmanifest">
-<title>CLASS RANKING</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#090d19"><link rel="manifest" href="manifest.webmanifest">
+<title>CLASS RANKING — Arena</title>
 <style>
-:root{color-scheme:dark;--bg:#10131c;--panel:#191f2d;--card:#20283a;--line:#394154;--muted:#aab4c8;--gold:#e9bd55;--green:#55c58a;--red:#e16e78}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f5f7fb;font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-header{background:var(--panel);border-bottom:1px solid var(--line);padding:18px max(18px,calc((100% - 980px)/2));display:flex;justify-content:space-between;align-items:center;gap:12px}
-.brand{font-weight:900;letter-spacing:1.2px}.brand span{color:var(--gold)}.online{font-size:11px;color:var(--green);border:1px solid #35694f;border-radius:20px;padding:4px 9px}
-main{max-width:980px;margin:24px auto;padding:0 16px 40px}.hero{background:linear-gradient(135deg,#1b2333,#191f2d);border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:18px}
-.eyebrow{color:var(--muted);font-size:11px;font-weight:700;letter-spacing:1.3px}.hero h1{font-size:clamp(28px,6vw,42px);margin:5px 0;color:var(--gold);letter-spacing:1px}.hero .avg{font-size:30px;font-weight:850;margin-top:8px}.muted{color:var(--muted)}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:20px}
-.stat{background:var(--card);border-radius:12px;padding:15px}.stat strong{display:block;font-size:25px;margin-top:5px}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin:18px 0}.panel h2{font-size:16px;letter-spacing:.7px;margin:0 0 15px}
-form{display:grid;grid-template-columns:1.5fr 1fr .7fr auto;gap:10px;align-items:end}
-label{display:block;color:var(--muted);font-size:11px;font-weight:750;letter-spacing:.6px;margin-bottom:6px}
-input,select{width:100%;background:#111722;color:#fff;border:1px solid var(--line);border-radius:9px;padding:11px;font:inherit;min-width:0}
-button{border:0;border-radius:9px;padding:11px 14px;font:700 13px system-ui;cursor:pointer}
-.primary{background:var(--green);color:#102018}.secondary{background:#303b52;color:#fff}.danger{background:#492831;color:#ffdce0;padding:7px 10px}.actions{display:flex;gap:7px;flex-wrap:wrap}
-.subjects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.subject{background:var(--card);border-radius:12px;padding:13px}.subject-top,.score{display:flex;justify-content:space-between;align-items:center;gap:10px}.subject-name{font-weight:750}.rank{font-size:11px;font-weight:850;letter-spacing:.5px;padding:5px 8px;border-radius:6px;background:#394154;color:#dce4f4;white-space:nowrap}.rank.gold{background:#55451f;color:#ffdc83}.rank.green{background:#204735;color:#a5f0c4}.subject-average{font-size:21px;font-weight:850;margin-top:10px}.bar{height:5px;background:#111722;border-radius:10px;margin-top:9px;overflow:hidden}.bar i{display:block;height:100%;background:var(--gold);border-radius:10px}
-.score-list{display:grid;gap:8px}.score{background:var(--card);border-radius:10px;padding:11px 12px}.score-info{min-width:0}.score-info strong{display:block}.score-info small{color:var(--muted)}.score-right{display:flex;align-items:center;gap:9px}.score-value{font-weight:850;white-space:nowrap}
-.empty{color:var(--muted);font-size:13px;padding:8px 0}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.toolbar .actions button{font-size:12px}
-footer{text-align:center;color:var(--muted);font-size:11px;padding:15px}
-dialog{background:var(--panel);color:#fff;border:1px solid var(--line);border-radius:14px;width:min(420px,calc(100% - 28px));padding:20px}dialog::backdrop{background:#000a}dialog h3{margin-top:0}dialog form{grid-template-columns:1fr 1fr}dialog .wide{grid-column:1/-1}
-@media(max-width:650px){form{grid-template-columns:1fr 1fr}form .field:first-child{grid-column:1/-1}form button{grid-column:1/-1}.subjects{grid-template-columns:1fr}.score{align-items:flex-start}.score-right{flex-wrap:wrap;justify-content:flex-end}.panel{padding:15px}header{padding:15px 16px}}
-
-/* Competitive-game UI motion pack */
-:root{--ease-out:cubic-bezier(.16,1,.3,1)}
-.hero{position:relative;overflow:hidden;animation:panel-in .65s var(--ease-out) both}
-.hero:after{content:"";position:absolute;inset:-40% auto -40% -35%;width:35%;transform:rotate(18deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.065),transparent);animation:shine-sweep 7s ease-in-out infinite;pointer-events:none}
-.panel{animation:panel-in .5s var(--ease-out) both}
-.panel:nth-of-type(2){animation-delay:.05s}.panel:nth-of-type(3){animation-delay:.1s}.panel:nth-of-type(4){animation-delay:.15s}.panel:nth-of-type(5){animation-delay:.2s}
-.subject{transition:transform .22s var(--ease-out),border-color .22s,box-shadow .22s; border:1px solid transparent;animation:card-in .4s var(--ease-out) both}
-.subject:hover{transform:translateY(-3px);border-color:#58647d;box-shadow:0 8px 24px #0004}
-.rank{transition:transform .2s,filter .2s}
-.rank.gold{box-shadow:0 0 12px #e9bd5528;animation:gold-pulse 2.8s ease-in-out infinite}
-.rank.green{box-shadow:0 0 10px #55c58a20}
-.bar i{transition:width .8s var(--ease-out);box-shadow:0 0 10px #e9bd5570}
-button{transition:transform .12s ease,filter .18s,box-shadow .18s}
-button:hover{filter:brightness(1.12);box-shadow:0 4px 15px #0003}
-button:active{transform:scale(.96)}
-.score{animation:score-in .35s var(--ease-out) both;transition:transform .18s,background .18s}
-.score:hover{transform:translateX(3px);background:#273149}
-.toast-wrap{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:99;pointer-events:none;width:min(92%,460px)}
-.rank-toast{display:flex;align-items:center;gap:10px;background:#192333;border:1px solid #e9bd55;border-radius:12px;padding:12px 15px;box-shadow:0 12px 36px #0008;animation:toast-in .45s var(--ease-out),toast-out .4s ease 3.2s forwards}
-.rank-toast .toast-icon{font-size:23px}.rank-toast strong{color:var(--gold);display:block}.rank-toast small{color:var(--muted)}
-.rank-up .hero{animation:rank-burst .8s ease}
-.confetti{position:fixed;top:-14px;width:7px;height:11px;border-radius:2px;z-index:98;pointer-events:none;animation:confetti-fall 1.65s ease-in forwards}
-@keyframes panel-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-@keyframes card-in{from{opacity:0;transform:translateY(8px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
-@keyframes score-in{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
-@keyframes shine-sweep{0%,65%{left:-45%}100%{left:130%}}
-@keyframes gold-pulse{0%,100%{filter:brightness(1)}50%{filter:brightness(1.18)}}
-@keyframes toast-in{from{opacity:0;transform:translateY(-15px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
-@keyframes toast-out{to{opacity:0;transform:translateY(-12px) scale(.98)}}
-@keyframes rank-burst{0%,100%{box-shadow:none}40%{box-shadow:0 0 0 2px #e9bd5570,0 0 36px #e9bd5540}}
-@keyframes confetti-fall{to{transform:translate(var(--drift),105vh) rotate(720deg);opacity:0}}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
-
-</style>
-</head>
+:root{--bg:#080c18;--panel:#111a2d;--panel2:#17233a;--gold:#f4c75e;--gold2:#ffe8a3;--blue:#54b9ff;--muted:#94a4bd;--line:#2b3b58;--green:#56e0a1;--red:#ff7185}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -15%,#23385d 0,#101a30 35%,var(--bg) 72%);color:#f4f7ff;font:15px system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+header{padding:24px 16px 18px;text-align:center;border-bottom:1px solid #293956;background:linear-gradient(180deg,#14233d99,transparent)}
+.logo{display:inline-flex;align-items:center;gap:10px;color:var(--gold);font-weight:1000;letter-spacing:3px;font-size:clamp(22px,5vw,34px);text-shadow:0 0 18px #f4c75e66}
+.logo .gem{font-size:30px;filter:drop-shadow(0 0 9px #f4c75e)}
+.subtitle{color:var(--muted);font-size:11px;letter-spacing:3px;margin-top:6px}
+main{max-width:1050px;margin:auto;padding:18px 14px 60px}
+.hero{display:grid;grid-template-columns:1fr;gap:14px}
+.panel{background:linear-gradient(145deg,#17243aee,#0f1729f5);border:1px solid var(--line);border-radius:18px;padding:17px;box-shadow:0 12px 32px #0005;position:relative;overflow:hidden;animation:rise .55s both}
+.panel:before{content:"";position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,transparent,var(--gold),var(--blue),transparent);opacity:.8}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes shimmer{0%,100%{filter:drop-shadow(0 0 4px #f4c75e55)}50%{filter:drop-shadow(0 0 16px #f4c75e)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes pop{0%{transform:scale(.55);opacity:0}70%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
+@keyframes sweep{from{background-position:200% 0}to{background-position:-200% 0}}
+h2{font-size:13px;letter-spacing:2px;color:var(--gold);margin:0 0 14px;text-transform:uppercase}
+.overview{display:grid;grid-template-columns:100px 1fr;gap:16px;align-items:center}
+.emblem{width:94px;height:94px;border:2px solid #c99c3e;border-radius:22px;background:linear-gradient(145deg,#263a5a,#111b30);display:grid;place-items:center;font-size:48px;box-shadow:inset 0 0 20px #f4c75e22,0 0 20px #f4c75e22;animation:shimmer 3s infinite}
+.rankname{font-size:25px;font-weight:1000;color:var(--gold2);text-shadow:0 2px 14px #f4c75e55}
+.bigavg{font-size:36px;font-weight:1000;letter-spacing:-1px}
+.muted{color:var(--muted);font-size:12px}
+.progress{height:10px;border-radius:20px;background:#26344c;overflow:hidden;margin-top:9px;border:1px solid #3a4d69}
+.progress>i{display:block;height:100%;width:0;background:linear-gradient(90deg,#a97822,var(--gold2),#fff1b8);background-size:200% 100%;animation:sweep 3s linear infinite;transition:width .8s cubic-bezier(.2,.8,.2,1);box-shadow:0 0 12px #f4c75e88}
+.stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.chip{background:#0c1425;border:1px solid #2b3c59;border-radius:999px;padding:7px 10px;font-size:11px;color:#c4d2e8}
+.grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px}
+label{display:block;font-size:12px;color:#bac9df;margin:9px 0 5px}
+input,select{width:100%;background:#0a1221;color:white;border:1px solid #344966;border-radius:10px;padding:11px;font:inherit;outline:none}
+input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 3px #f4c75e1b}
+button{border:0;border-radius:10px;padding:11px 14px;font-weight:900;cursor:pointer;color:#172033;background:linear-gradient(135deg,var(--gold2),#dca63c);box-shadow:0 4px 0 #8d641e;transition:.15s}
+button:active{transform:translateY(3px);box-shadow:0 1px 0 #8d641e}
+button.secondary{background:#243651;color:#e4edfc;box-shadow:0 4px 0 #101a2a;border:1px solid #3b5274}
+button.danger{background:#4a2330;color:#ffdce2;box-shadow:0 4px 0 #24121a}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.subjects{display:grid;grid-template-columns:1fr;gap:9px}
+.subject{background:linear-gradient(110deg,#111d31,#0d1525);border:1px solid #2c3e5d;border-radius:13px;padding:12px;display:grid;grid-template-columns:42px 1fr auto;gap:10px;align-items:center;animation:rise .45s both}
+.sicon{width:40px;height:40px;border-radius:11px;background:#263751;display:grid;place-items:center;font-size:21px;border:1px solid #486080}
+.sname{font-weight:800;font-size:13px}.smeta{color:var(--muted);font-size:11px;margin-top:3px}
+.savg{text-align:right;font-weight:1000;font-size:17px;color:var(--gold2)}
+.rankbadge{font-size:10px;color:#101828;background:var(--gold);border-radius:5px;padding:3px 6px;font-weight:1000;display:inline-block;margin-top:4px}
+.entry{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.entry button{grid-column:1/-1}
+.history{display:flex;flex-direction:column;gap:7px}.grade{display:flex;justify-content:space-between;align-items:center;background:#0c1526;border:1px solid #2b3b57;border-radius:10px;padding:9px 10px;font-size:12px}
+.grade small{color:var(--muted)}.grade button{padding:5px 9px;font-size:11px}
+.podium{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;align-items:end}
+.pod{border:1px solid #3b4d6a;border-radius:12px;text-align:center;padding:12px 5px;background:linear-gradient(#253754,#121c30);font-size:11px}
+.pod strong{display:block;font-size:22px;color:var(--gold);margin-bottom:3px}.pod:nth-child(2){padding-top:24px;border-color:#d9ae4e;box-shadow:0 0 22px #e7b94a22}
+footer{text-align:center;color:#60718b;font-size:10px;margin-top:25px;letter-spacing:1px}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,30px);opacity:0;background:#172943;border:1px solid var(--gold);color:#fff1c3;padding:12px 18px;border-radius:12px;z-index:5;transition:.3s;box-shadow:0 8px 30px #0008}#toast.show{opacity:1;transform:translate(-50%,0)}
+#celebrate{position:fixed;inset:0;display:none;place-items:center;background:#060b18dd;z-index:10;text-align:center}#celebrate.show{display:grid;animation:pop .45s}#celebrate .box{padding:28px;border:2px solid var(--gold);border-radius:22px;background:linear-gradient(145deg,#263b5b,#0b1425);box-shadow:0 0 60px #f4c75e55}#celebrate .icon{font-size:70px;animation:pulse .8s infinite}#celebrate h1{color:var(--gold);margin:8px}
+@media(min-width:760px){.hero{grid-template-columns:1.1fr .9fr}.grid{grid-template-columns:1.15fr .85fr}.subjects{grid-template-columns:1fr 1fr}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
 <body>
-<div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
-<header><div class="brand">🏆 CLASS <span>RANKING</span></div><div class="online">● PERSONAL LEADERBOARD</div></header>
+<header><div class="logo"><span class="gem">✦</span> CLASS RANKING</div><div class="subtitle">SCHOOL ARENA · SEASON 01</div></header>
 <main>
 <section class="hero">
-  <div class="eyebrow">PERSONAL STATS · SEASON 01</div>
-  <h1 id="globalRank">UNRANKED</h1>
-  <div class="avg" id="globalAverage">--/20</div>
-  <div class="muted" id="globalCaption">Ajoute tes premières notes pour commencer.</div>
-  <div class="stats">
-    <div class="stat"><div class="eyebrow">GLOBAL AVERAGE</div><strong id="globalStat">--</strong><span class="muted">sur 20</span></div>
-    <div class="stat"><div class="eyebrow">TOTAL SCORES</div><strong id="totalScores">0</strong><span class="muted">notes enregistrées</span></div>
-  </div>
+<div class="panel"><h2>Ton classement</h2><div class="overview"><div class="emblem" id="mainEmblem">⚔️</div><div><div class="rankname" id="globalRank">—</div><div class="bigavg" id="globalAvg">—<span style="font-size:15px;color:#9eacc2"> / 20</span></div><div class="muted" id="progressText">Ajoute tes premières notes</div><div class="progress"><i id="progressBar"></i></div></div></div><div class="stats"><span class="chip" id="countChip">0 notes</span><span class="chip" id="subjectChip">0 matières notées</span><span class="chip">MODE SOLO</span></div></div>
+<div class="panel"><h2>Arène des rangs</h2><div class="podium"><div class="pod"><strong>🥈</strong>HT2<br><small>16–16,99</small></div><div class="pod"><strong>👑</strong>HT1<br><small>17–20</small></div><div class="pod"><strong>🥉</strong>HT3<br><small>15–15,99</small></div></div><p class="muted" style="margin:13px 0 0">Chaque note fait évoluer ton niveau. Débloque les emblèmes en progressant.</p></div>
 </section>
-
-<section class="panel">
-  <h2>＋ ADD NEW SCORE</h2>
-  <form id="gradeForm">
-    <div class="field"><label for="subject">SUBJECT</label><select id="subject" required></select></div>
-    <div class="field"><label for="grade">YOUR GRADE</label><input id="grade" type="number" min="0" max="20" step="0.25" placeholder="Ex : 15" required></div>
-    <div class="field"><label for="outOf">OUT OF</label><input id="outOf" type="number" min="1" max="1000" step="any" value="20" required></div>
-    <button class="primary" type="submit">＋ ADD SCORE</button>
-  </form>
-  <div class="muted" style="font-size:12px;margin-top:9px">Les notes sont converties sur 20 pour calculer les moyennes.</div>
-</section>
-
-<section class="panel">
-  <h2>GLOBAL LEADERBOARD</h2>
-  <div class="toolbar"><span class="muted" style="font-size:12px">Rang calculé automatiquement</span><span class="rank" id="globalBadge">UNRANKED</span></div>
-  <div class="stats">
-    <div class="stat"><div class="eyebrow">AVERAGE</div><strong id="globalAverageCard">--</strong><span class="muted">/ 20</span></div>
-    <div class="stat"><div class="eyebrow">CURRENT TIER</div><strong id="globalTier">--</strong><span class="muted">global rank</span></div>
-  </div>
-</section>
-
-<section class="panel">
-  <h2>SUBJECT RANKS</h2>
-  <div class="subjects" id="subjectRanks"></div>
-</section>
-
-<section class="panel">
-  <div class="toolbar" style="margin-bottom:14px"><h2 style="margin:0">RECENT SCORES</h2><div class="actions"><button class="secondary" id="exportBtn" type="button">EXPORT</button><button class="secondary" id="importBtn" type="button">IMPORT</button><input id="importFile" type="file" accept="application/json" hidden></div></div>
-  <div class="score-list" id="scoreList"><div class="empty">Aucune note enregistrée pour le moment.</div></div>
-</section>
-<footer>CLASS RANKING · VERSION 1.0 · Données enregistrées sur cet appareil</footer>
+<section class="grid">
+<div class="panel"><h2>Mes matières</h2><div class="subjects" id="subjects"></div></div>
+<div style="display:flex;flex-direction:column;gap:14px">
+<div class="panel"><h2>Ajouter une note</h2><div class="entry"><div><label for="subject">Matière</label><select id="subject"></select></div><div><label for="grade">Note obtenue</label><input id="grade" type="number" min="0" max="20" step=".25" placeholder="Ex. 15,5"></div><div><label for="max">Sur combien ?</label><input id="max" type="number" min=".01" value="20" step=".5"></div><button id="add">＋ ENREGISTRER LA NOTE</button></div></div>
+<div class="panel"><h2>Dernières notes</h2><div class="history" id="history"><div class="muted">Aucune note pour le moment.</div></div><div class="actions"><button class="secondary" id="export">Exporter JSON</button><button class="secondary" id="importBtn">Importer JSON</button><input id="importFile" type="file" accept="application/json" hidden></div></div>
+</div></section>
+<footer>CLASS RANKING · YOUR GRADES, YOUR PROGRESSION</footer>
 </main>
-
-<dialog id="editDialog">
-  <h3>EDIT SCORE</h3>
-  <form id="editForm">
-    <input id="editId" type="hidden">
-    <div class="wide"><label for="editSubject">SUBJECT</label><select id="editSubject"></select></div>
-    <div><label for="editGrade">GRADE</label><input id="editGrade" type="number" min="0" step="any" required></div>
-    <div><label for="editOutOf">OUT OF</label><input id="editOutOf" type="number" min="1" step="any" required></div>
-    <div class="wide actions"><button class="primary" type="submit">SAVE CHANGES</button><button class="secondary" type="button" id="cancelEdit">CANCEL</button></div>
-  </form>
-</dialog>
+<div id="toast"></div><div id="celebrate"><div class="box"><div class="icon" id="celebrateIcon">🏆</div><h1>NOUVEAU RANG !</h1><p id="celebrateText"></p><button onclick="document.getElementById('celebrate').classList.remove('show')">CONTINUER</button></div></div>
 <script>
-const SUBJECTS=["Maths","Italien","Histoire italien","Physique-chimie","HGGSP","Français","Enseignement scientifique","Sport","Anglais","Histoire-géo"];
-const STORAGE_KEY="class-ranking-grades-v1";
-let grades=[];
+const names=["Maths","Italien","Histoire italien","Physique-chimie","HGGSP","Français","Enseignement scientifique","Sport","Anglais","Histoire-géo"];
+const icons=["📐","🍕","🏛️","⚗️","🌍","📖","🧪","🏅","🌐","🗺️"];
+const ranks=[["LT5",0,"🪨"],["HT5",5,"🪵"],["LT4",10,"🛡️"],["HT4",12,"⚒️"],["LT3",14,"⚔️"],["HT3",15,"🏹"],["HT2",16,"💎"],["HT1",17,"👑"]];
+let data=JSON.parse(localStorage.getItem("classRankingV3")||'{"grades":[]}');
+if(!Array.isArray(data.grades))data={grades:[]};
 const $=id=>document.getElementById(id);
-function load(){try{const raw=localStorage.getItem(STORAGE_KEY);const parsed=raw?JSON.parse(raw):[];grades=Array.isArray(parsed)?parsed.filter(g=>g&&SUBJECTS.includes(g.subject)&&Number.isFinite(g.value)&&g.value>=0&&g.value<=20):[]}catch{grades=[]}}
-function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(grades))}catch{alert("Impossible d'enregistrer les notes dans ce navigateur.")}}
-function rank(n){if(n<5)return"LT5";if(n<10)return"HT5";if(n<12)return"LT4";if(n<14)return"HT4";if(n<15)return"LT3";if(n<16)return"HT3";if(n<17)return"HT2";return"HT1"}
-function average(items){return items.length?items.reduce((s,g)=>s+g.value,0)/items.length:null}
-function fmt(n){return n===null?"--":n.toFixed(2)}
-function rankClass(r){return r==="HT1"||r==="HT2"?"gold":r==="HT3"||r==="LT3"?"green":""}
-function options(select){select.innerHTML=SUBJECTS.map(s=>`<option>${escapeHtml(s)}</option>`).join("")}
-function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function rank(v){let r=ranks[0];for(const x of ranks)if(v>=x[1])r=x;return r}
+function avg(arr){return arr.length?arr.reduce((a,b)=>a+b.value,0)/arr.length:null}
+function all(){return data.grades}
+function save(){localStorage.setItem("classRankingV3",JSON.stringify(data))}
+function fmt(v){return v===null?"—":v.toFixed(2).replace(".",",")}
+function toast(t){$("toast").textContent=t;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),2300)}
 function render(){
- const overall=average(grades),r=overall===null?null:rank(overall);
- $("globalRank").textContent=r||"UNRANKED";$("globalAverage").textContent=overall===null?"--/20":fmt(overall)+"/20";
- $("globalCaption").textContent=overall===null?"Ajoute tes premières notes pour commencer.":"Ton classement global est "+r+".";
- $("globalStat").textContent=fmt(overall);$("globalAverageCard").textContent=fmt(overall);$("globalTier").textContent=r||"--";
- $("globalBadge").textContent=r||"UNRANKED";$("globalBadge").className="rank "+(r?rankClass(r):"");$("totalScores").textContent=grades.length;
- $("subjectRanks").innerHTML=SUBJECTS.map(s=>{const items=grades.filter(g=>g.subject===s),a=average(items),sr=a===null?null:rank(a);return `<article class="subject"><div class="subject-top"><span class="subject-name">${escapeHtml(s)}</span><span class="rank ${sr?rankClass(sr):""}">${sr||"UNRANKED"}</span></div><div class="subject-average">${fmt(a)}<span class="muted" style="font-size:12px"> /20</span></div><div class="muted" style="font-size:11px">${items.length} note${items.length>1?"s":""}</div><div class="bar"><i style="width:${a===null?0:Math.max(0,Math.min(100,a/20*100))}%"></i></div></article>`}).join("");
- const sorted=[...grades].sort((a,b)=>b.createdAt-a.createdAt);
- $("scoreList").innerHTML=sorted.length?sorted.map(g=>`<div class="score"><div class="score-info"><strong>${escapeHtml(g.subject)}</strong><small>${escapeHtml(g.original||fmt(g.value)+"/20")} · ${new Date(g.createdAt).toLocaleDateString("fr-FR")}</small></div><div class="score-right"><span class="score-value">${fmt(g.value)}/20</span><span class="rank ${rankClass(rank(g.value))}">${rank(g.value)}</span><div class="actions"><button class="secondary" type="button" data-edit="${g.id}" aria-label="Modifier">EDIT</button><button class="danger" type="button" data-delete="${g.id}" aria-label="Supprimer">✕</button></div></div></div>`).join(""):'<div class="empty">Aucune note enregistrée pour le moment.</div>';
+ const total=avg(all()),r=total===null?null:rank(total),prev=window.lastRank;
+ $("globalRank").textContent=r?r[0]:"NON CLASSÉ";$("mainEmblem").textContent=r?r[2]:"⚔️";$("globalAvg").innerHTML=(total===null?"—":fmt(total))+'<span style="font-size:15px;color:#9eacc2"> / 20</span>';
+ const next=ranks.find(x=>x[1]>(total??-1));const floor=r?r[1]:0;const target=next?next[1]:20;const pct=total===null?0:Math.max(0,Math.min(100,(total-floor)/Math.max(.01,target-floor)*100));
+ $("progressBar").style.width=pct+"%";$("progressText").textContent=total===null?"Ajoute tes premières notes":next?`${fmt(total)} / ${target} pour atteindre ${next[0]}`:"Rang maximum atteint !";
+ $("countChip").textContent=all().length+" note"+(all().length>1?"s":"");$("subjectChip").textContent=names.filter(n=>all().some(g=>g.subject===n)).length+" matières notées";
+ $("subjects").innerHTML=names.map((n,i)=>{let a=avg(all().filter(g=>g.subject===n)),rr=a===null?null:rank(a);return `<div class="subject"><div class="sicon">${icons[i]}</div><div><div class="sname">${n}</div><div class="smeta">${all().filter(g=>g.subject===n).length} note(s) · ${rr?rr[0]:"En attente"}</div></div><div class="savg">${fmt(a)}<div>${rr?`<span class="rankbadge">${rr[0]} ${rr[2]}</span>`:""}</div></div></div>`}).join("");
+ $("history").innerHTML=all().slice().reverse().slice(0,12).map(g=>`<div class="grade"><span><b>${g.subject}</b><br><small>${g.raw} / ${g.max}</small></span><b>${fmt(g.value)}/20</b><button class="danger" onclick="removeGrade('${g.id}')">✕</button></div>`).join("")||'<div class="muted">Aucune note pour le moment.</div>';
+ if(r&&prev&&r[0]!==prev[0]&&r[1]>prev[1]){ $("celebrateIcon").textContent=r[2];$("celebrateText").textContent="Tu as débloqué "+r[0]+" !";$("celebrate").classList.add("show");}
+ window.lastRank=r;
 }
-function showToast(title,subtitle,icon="✨"){const wrap=$("toastWrap");wrap.innerHTML=`<div class="rank-toast"><span class="toast-icon">${icon}</span><div><strong>${escapeHtml(title)}</strong><small>${escapeHtml(subtitle)}</small></div></div>`;setTimeout(()=>{wrap.innerHTML=""},3800)}
-function confetti(){const colors=["#e9bd55","#55c58a","#7aa7ff","#f5f7fb"];for(let i=0;i<34;i++){const p=document.createElement("i");p.className="confetti";p.style.left=(Math.random()*100)+"vw";p.style.background=colors[i%colors.length];p.style.setProperty("--drift",(Math.random()*180-90)+"px");p.style.animationDelay=(Math.random()*.22)+"s";document.body.appendChild(p);setTimeout(()=>p.remove(),2100)}}
-function addGrade(subject,grade,outOf){if(!Number.isFinite(grade)||!Number.isFinite(outOf)||outOf<=0||grade<0||grade>outOf)return false;const before=average(grades),beforeRank=before===null?null:rank(before);const value=grade/outOf*20;grades.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),subject,value,original:`${grade}/${outOf}`,createdAt:Date.now()});save();render();const after=average(grades),afterRank=rank(after);if(beforeRank&&beforeRank!==afterRank){showToast("RANK UP! "+afterRank,`Moyenne générale : ${after.toFixed(2)}/20`,"🏆");document.body.classList.add("rank-up");confetti();setTimeout(()=>document.body.classList.remove("rank-up"),900)}else{showToast("NOTE AJOUTÉE",`${subject} · ${grade}/${outOf} (${rank(value)})`,"⚡")}return true}
-$("gradeForm").addEventListener("submit",e=>{e.preventDefault();const subject=$("subject").value,grade=Number($("grade").value),outOf=Number($("outOf").value);if(addGrade(subject,grade,outOf)){ $("grade").value="";$("outOf").value="20";}});
-$("scoreList").addEventListener("click",e=>{const del=e.target.closest("[data-delete]"),edit=e.target.closest("[data-edit]");if(del){if(confirm("Supprimer cette note ?")){grades=grades.filter(g=>g.id!==del.dataset.delete);save();render()}}if(edit){const g=grades.find(x=>x.id===edit.dataset.edit);if(!g)return;const parts=(g.original||`${g.value}/20`).split("/");$("editId").value=g.id;$("editSubject").value=g.subject;$("editGrade").value=parts[0];$("editOutOf").value=parts[1]||20;$("editDialog").showModal()}});
-$("editForm").addEventListener("submit",e=>{e.preventDefault();const id=$("editId").value,grade=Number($("editGrade").value),outOf=Number($("editOutOf").value);if(!Number.isFinite(grade)||!Number.isFinite(outOf)||outOf<=0||grade<0||grade>outOf){alert("Vérifie la note et le barème.");return}const g=grades.find(x=>x.id===id);if(g){g.subject=$("editSubject").value;g.value=grade/outOf*20;g.original=`${grade}/${outOf}`;g.createdAt=Date.now();save();render()}$("editDialog").close()});
-$("cancelEdit").addEventListener("click",()=>$("editDialog").close());
-$("exportBtn").addEventListener("click",()=>{const blob=new Blob([JSON.stringify({app:"CLASS RANKING",version:1,grades},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="class-ranking-backup.json";a.click();URL.revokeObjectURL(a.href)});
-$("importBtn").addEventListener("click",()=>$("importFile").click());
-$("importFile").addEventListener("change",async e=>{const file=e.target.files[0];if(!file)return;try{const data=JSON.parse(await file.text());const incoming=Array.isArray(data)?data:data.grades;if(!Array.isArray(incoming))throw Error();const clean=incoming.filter(g=>g&&SUBJECTS.includes(g.subject)&&Number.isFinite(Number(g.value))&&Number(g.value)>=0&&Number(g.value)<=20).map(g=>({...g,id:String(g.id||crypto.randomUUID?.()||Date.now()+Math.random()),value:Number(g.value),createdAt:Number(g.createdAt)||Date.now()}));if(confirm(`Importer ${clean.length} note(s) ? Cela remplacera les notes actuelles.`)){grades=clean;save();render()}}catch{alert("Fichier de sauvegarde invalide.")}e.target.value=""});
-options($("subject"));options($("editSubject"));load();render();
-</script>
-<script>if("serviceWorker" in navigator){addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script>
-</body>
-</html>
+window.removeGrade=id=>{data.grades=data.grades.filter(g=>g.id!==id);save();render();toast("Note supprimée")};
+names.forEach(n=>$("subject").add(new Option(n,n)));
+$("add").onclick=()=>{let subject=$("subject").value,raw=Number($("grade").value),max=Number($("max").value);if(!$("grade").value||!Number.isFinite(raw)||!Number.isFinite(max)||max<=0||raw<0||raw>max){toast("Vérifie la note et le barème");return}let value=raw/max*20;data.grades.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),subject,raw,max,value,created:new Date().toISOString()});save();render();$("grade").value="";toast("Note ajoutée · progression actualisée ⚡")};
+$("export").onclick=()=>{let blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="class-ranking-notes.json";a.click();URL.revokeObjectURL(a.href)};
+$("importBtn").onclick=()=>$("importFile").click();
+$("importFile").onchange=async e=>{try{let obj=JSON.parse(await e.target.files[0].text());if(!Array.isArray(obj.grades))throw 0;data=obj;save();render();toast("Notes importées")}catch{toast("Fichier JSON invalide")}e.target.value=""};
+render();
+if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+</script></body></html>
